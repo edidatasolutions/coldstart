@@ -1,0 +1,71 @@
+# Bayesian calibration of new items with predicted priors
+
+Grid posterior for each item's Rasch difficulty given pretest responses
+from examinees with known ability (from operational scoring). Each item
+is calibrated twice: with the predicted prior, and with a vague baseline
+prior N(0, \`baseline_sd\`^2), which stands in for conventional
+calibration.
+
+## Usage
+
+``` r
+cs_calibrate(
+  responses,
+  prior = NULL,
+  prior_df = 4,
+  baseline_sd = 3,
+  grid = seq(-7, 7, by = 0.02)
+)
+```
+
+## Arguments
+
+- responses:
+
+  Long data frame: \`item\`, \`theta\`, \`x\` (0/1).
+
+- prior:
+
+  Output of \`predict()\` on a \`cs_predictor\` (\`item\`, \`mean\`,
+  \`sd\`), or \`NULL\` for baseline only.
+
+- prior_df:
+
+  Degrees of freedom of the t prior (\> 2, or \`Inf\`).
+
+- baseline_sd:
+
+  SD of the vague baseline prior.
+
+- grid:
+
+  Difficulty grid.
+
+## Value
+
+A \`cs_calibration\` data frame: \`item\`, \`n\`, \`post_mean\`,
+\`post_sd\`, \`base_mean\`, \`base_sd\`, \`prior_mean\`, \`prior_sd\`,
+and \`conflict_z\` (baseline estimate vs prior, standardized by their
+combined SD: a prior-data conflict check).
+
+## Details
+
+The predicted prior is a Student-t with \`prior_df\` degrees of freedom
+by default. When the prediction is badly wrong (e.g. a template
+changed), the heavy tail lets the data override it instead of being
+dragged toward it. \`prior_df = Inf\` gives a normal prior.
+
+## Examples
+
+``` r
+sim <- cs_simulate(n_train = 200, n_new = 60, seed = 1)
+it <- sim$items; tr <- it$set == "train"
+pr <- cs_predictor(it$b_legacy[tr], sim$features[tr, ], it$family[tr], seed = 1)
+pred <- predict(pr, sim$features[!tr, ], it$family[!tr])
+cal <- cs_calibrate(cs_responses(sim, 25, seed = 2), pred)
+truth <- it$b_true[match(cal$item, it$item)]
+c(baseline = sqrt(mean((cal$base_mean - truth)^2)),
+  predicted_prior = sqrt(mean((cal$post_mean - truth)^2)))
+#>        baseline predicted_prior 
+#>       0.4457531       0.4501109 
+```
