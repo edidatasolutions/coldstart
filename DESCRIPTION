@@ -1,0 +1,19 @@
+Package: coldstart
+Title: Calibrating Generated Items Before Pretesting with Predicted Priors
+Version: 0.1.0
+Authors@R: person("Daniel", "Edi", email = "danieledi2026@gmail.com", role = c("aut", "cre"))
+Description: Predicts Rasch item difficulty from item features (text
+    embeddings from any model, template family, content metadata) with honest
+    uncertainty, uses the predictions as robust informative priors to
+    calibrate new items from small pretest samples, plans the pretest sample
+    size needed for a target precision, and diagnoses item families whose
+    predictions cannot be trusted.
+License: MIT + file LICENSE
+URL: https://github.com/edidatasolutions/coldstart, https://edidatasolutions.github.io/coldstart/
+BugReports: https://github.com/edidatasolutions/coldstart/issues
+Encoding: UTF-8
+Depends: R (>= 4.1)
+Imports: stats
+Suggests: knitr, markdown
+VignetteBuilder: knitr
+Config/roxygen2/version: 8.1.0

@@ -1,0 +1,80 @@
+---
+title: "Calibrating generated items with predicted priors"
+output: markdown::html_format
+vignette: >
+  %\VignetteIndexEntry{Calibrating generated items with predicted priors}
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+Automatic item generation produces items faster than pretesting can calibrate
+them. coldstart predicts each new item's difficulty from its features, uses
+the prediction as a robust prior, and finds template families where the
+prediction cannot be trusted.
+
+## A bank with features
+
+Legacy items have calibrated difficulties; new generated items have only
+features (any numeric representation works, such as embeddings from any text
+model or cognitive-attribute codes) and a template family. In the simulation,
+one family's template drifted, making its new items harder than its history
+suggests.
+
+```{r}
+library(coldstart)
+sim <- cs_simulate(n_train = 400, n_new = 150, seed = 3)
+it <- sim$items
+tr <- it$set == "train"
+table(it$set)
+```
+
+## Predict difficulty, with honest uncertainty
+
+```{r}
+pr <- cs_predictor(it$b_legacy[tr], sim$features[tr, ], it$family[tr], seed = 1)
+pr
+pred <- predict(pr, sim$features[!tr, ], it$family[!tr])
+head(pred)
+```
+
+The predictive SD is estimated out of sample. It is larger for a family never
+seen in training, because the family's own effect is then unknown.
+
+## How many pretest responses do we need?
+
+```{r}
+plan <- cs_plan(pred, target_sd = 0.3)
+summary(plan[c("n_with_prior", "n_without_prior")])
+```
+
+## Calibrate from a small pretest
+
+```{r}
+resp <- cs_responses(sim, n_per_item = 25, seed = 4)
+cal <- cs_calibrate(resp, pred)
+truth <- it$b_true[match(cal$item, it$item)]
+c(baseline = sqrt(mean((cal$base_mean - truth)^2)),
+  with_prior = sqrt(mean((cal$post_mean - truth)^2)))
+```
+
+## Which families can we trust?
+
+```{r}
+fam <- setNames(it$family[!tr], it$item[!tr])
+chk <- cs_check(cs_calibrate(cs_responses(sim, 100, seed = 5), pred), fam)
+chk
+unique(it$family[it$rogue])
+```
+
+Priors for families that fail the check are withdrawn before the final
+calibration:
+
+```{r}
+resp100 <- cs_responses(sim, 100, seed = 5)
+final <- cs_calibrate(resp100, cs_distrust(pred, chk))
+head(final[c("item", "n", "post_mean", "post_sd")])
+```
