@@ -1,7 +1,8 @@
 Package: coldstart
 Title: Calibrating Generated Items Before Pretesting with Predicted Priors
 Version: 0.1.0
-Authors@R: person("Daniel", "Edi", email = "danieledi2026@gmail.com", role = c("aut", "cre"))
+Authors@R: person("Daniel", "Edi", email = "danieledi2026@gmail.com", role = c("aut", "cre", "cph"),
+    comment = c(ORCID = "0000-0001-5475-819X"))
 Description: Predicts Rasch item difficulty from item features (text
     embeddings from any model, template family, content metadata) with honest
     uncertainty, uses the predictions as robust informative priors to

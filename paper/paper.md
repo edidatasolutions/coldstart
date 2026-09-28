@@ -8,6 +8,7 @@ tags:
   - item response theory
 authors:
   - name: Daniel Edi
+    orcid: 0000-0001-5475-819X
     affiliation: 1
 affiliations:
   - name: Independent Researcher
@@ -16,7 +17,7 @@ date: 27 September 2026
 bibliography: paper.bib
 ---
 
-<!-- DRAFT. Verify every reference and number before submission. Add your ORCID under the author (orcid: 0000-...) once you have one. Check the
+<!-- DRAFT. Verify every reference and number before submission. Check the
 journal's policy on disclosing AI-assisted software and writing. -->
 
 # Summary
