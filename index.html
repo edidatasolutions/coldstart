@@ -92,9 +92,9 @@
 </ul>
 </div>
 <div class="section level2">
-<h2 id="validation-known-truth-5-replications-instvalidationknown_truthr">Validation (known truth, 5 replications, <code>inst/validation/known_truth.R</code>)<a class="anchor" aria-label="anchor" href="#validation-known-truth-5-replications-instvalidationknown_truthr"></a>
+<h2 id="validation-known-truth-100-replications">Validation (known truth, 100 replications)<a class="anchor" aria-label="anchor" href="#validation-known-truth-100-replications"></a>
 </h2>
-<p>Predictive SDs are honest: stated 0.54 vs actual RMSE 0.53 (seen families), 0.70 vs 0.64 (unseen family); 90% intervals cover 90.8% and 90.4%.</p>
+<p>Predictive SDs are honest: stated 0.54 vs actual RMSE 0.53 (seen families), 0.68 vs 0.64 (unseen family); 90% intervals cover 90.8% and 90.2%.</p>
 <p>RMSE of difficulty, seen families:</p>
 <table class="table">
 <thead><tr>
@@ -105,29 +105,34 @@
 <tbody>
 <tr>
 <td>15</td>
-<td>0.72</td>
-<td>0.40</td>
+<td>0.69</td>
+<td>0.41</td>
 </tr>
 <tr>
 <td>25</td>
-<td>0.53</td>
-<td>0.35</td>
+<td>0.52</td>
+<td>0.36</td>
 </tr>
 <tr>
 <td>50</td>
-<td>0.36</td>
-<td>0.30</td>
+<td>0.35</td>
+<td>0.29</td>
 </tr>
 <tr>
 <td>100</td>
-<td>0.27</td>
-<td>0.23</td>
+<td>0.24</td>
+<td>0.22</td>
+</tr>
+<tr>
+<td>200</td>
+<td>0.17</td>
+<td>0.16</td>
 </tr>
 </tbody>
 </table>
-<p>With the prior, 25 responses do what 50 do without it.</p>
-<p><strong>Drifted (“rogue”) template family</strong> (+1.2 logits vs its history): the prior alone hurts (0.66 vs 0.61 at n = 25). <code>cs_check</code> flags the family in 80% of replications at n = 25 and 100% at n ≥ 50, with 0.2 false family flags per replication. After <code><a href="reference/cs_distrust.html">cs_distrust()</a></code>, RMSE is back at baseline (0.57 at n = 25).</p>
-<p><strong>Planner:</strong> a target posterior SD of 0.30 needs a median of 40 responses per item with the prior vs 57 without; achieved SD 0.302, RMSE 0.300.</p>
+<p>With the prior, 25 responses do about what 50 do without it.</p>
+<p><strong>Drifted (“rogue”) template family</strong> (+1.2 logits vs its history): the prior alone hurts (0.63 vs 0.60 at n = 25). <code>cs_check</code> flags the family in 80% of replications at n = 15, 94% at n = 25 and 98–100% at n ≥ 50, with 0.1–0.2 false family flags per replication. After <code><a href="reference/cs_distrust.html">cs_distrust()</a></code>, RMSE is back at or slightly below baseline (0.58 at n = 25).</p>
+<p><strong>Planner:</strong> a target posterior SD of 0.30 needs a median of 40 responses per item with the prior vs 57 without; achieved SD 0.303, RMSE 0.301.</p>
 </div>
 <div class="section level2">
 <h2 id="status">Status<a class="anchor" aria-label="anchor" href="#status"></a>
