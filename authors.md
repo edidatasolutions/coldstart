@@ -2,7 +2,8 @@
 
 ## Authors
 
-- **Daniel Edi**. Author, maintainer.
+- **Daniel Edi**. Author, maintainer, copyright holder.
+  [](https://orcid.org/0000-0001-5475-819X)
 
 ## Citation
 
