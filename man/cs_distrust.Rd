@@ -30,11 +30,11 @@ baseline-level accuracy for a drifted family while keeping the prior's
 benefit elsewhere.
 }
 \examples{
-sim <- cs_simulate(n_train = 200, n_new = 150, seed = 1)
+sim <- cs_simulate(n_train = 150, n_new = 80, seed = 1)
 it <- sim$items; tr <- it$set == "train"
 pr <- cs_predictor(it$b_legacy[tr], sim$features[tr, ], it$family[tr], seed = 1)
 pred <- predict(pr, sim$features[!tr, ], it$family[!tr])
-resp <- cs_responses(sim, 100, seed = 2)
+resp <- cs_responses(sim, 60, seed = 2)
 chk <- cs_check(cs_calibrate(resp, pred), setNames(it$family[!tr], it$item[!tr]))
 final <- cs_calibrate(resp, cs_distrust(pred, chk))
 head(final)
