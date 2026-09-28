@@ -83,28 +83,28 @@ benefit elsewhere.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="cs_simulate.html">cs_simulate</a></span><span class="op">(</span>n_train <span class="op">=</span> <span class="fl">200</span>, n_new <span class="op">=</span> <span class="fl">150</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="cs_simulate.html">cs_simulate</a></span><span class="op">(</span>n_train <span class="op">=</span> <span class="fl">150</span>, n_new <span class="op">=</span> <span class="fl">80</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">it</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">$</span><span class="va">items</span>; <span class="va">tr</span> <span class="op">&lt;-</span> <span class="va">it</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="st">"train"</span></span></span>
 <span class="r-in"><span><span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu"><a href="cs_predictor.html">cs_predictor</a></span><span class="op">(</span><span class="va">it</span><span class="op">$</span><span class="va">b_legacy</span><span class="op">[</span><span class="va">tr</span><span class="op">]</span>, <span class="va">sim</span><span class="op">$</span><span class="va">features</span><span class="op">[</span><span class="va">tr</span>, <span class="op">]</span>, <span class="va">it</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="va">tr</span><span class="op">]</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">pr</span>, <span class="va">sim</span><span class="op">$</span><span class="va">features</span><span class="op">[</span><span class="op">!</span><span class="va">tr</span>, <span class="op">]</span>, <span class="va">it</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="op">!</span><span class="va">tr</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="cs_responses.html">cs_responses</a></span><span class="op">(</span><span class="va">sim</span>, <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="cs_responses.html">cs_responses</a></span><span class="op">(</span><span class="va">sim</span>, <span class="fl">60</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu"><a href="cs_check.html">cs_check</a></span><span class="op">(</span><span class="fu"><a href="cs_calibrate.html">cs_calibrate</a></span><span class="op">(</span><span class="va">resp</span>, <span class="va">pred</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">it</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="op">!</span><span class="va">tr</span><span class="op">]</span>, <span class="va">it</span><span class="op">$</span><span class="va">item</span><span class="op">[</span><span class="op">!</span><span class="va">tr</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">final</span> <span class="op">&lt;-</span> <span class="fu"><a href="cs_calibrate.html">cs_calibrate</a></span><span class="op">(</span><span class="va">resp</span>, <span class="fu">cs_distrust</span><span class="op">(</span><span class="va">pred</span>, <span class="va">chk</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">final</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    item   n  post_mean   post_sd  base_mean   base_sd prior_mean  prior_sd</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 G0201 100 -1.0633588 0.2176494 -0.9454320 0.2376415 -1.4339282 0.5905433</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 G0202 100  0.4436820 0.1993020  0.3750020 0.2226421  0.6726528 0.5905433</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 G0203 100  0.2709171 0.1943451  0.2814189 0.2216530  0.2325054 0.5905433</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 G0204 100  0.4820017 0.1954671  0.4123021 0.2171822  0.7260537 0.5905433</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 G0205 100  0.1508391 0.2206569  0.1520704 0.2215577  0.0000000 3.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 G0206 100 -1.6181713 0.2428300 -1.4817934 0.2734298 -1.9260782 0.5905433</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    item  n   post_mean   post_sd   base_mean   base_sd prior_mean  prior_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 G0151 60  0.86147035 0.2612357  0.79608556 0.3021885  1.0196512 0.7165573</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 G0152 60  0.03322728 0.2894111  0.03371001 0.2914284  0.0000000 3.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 G0153 60  2.23272563 0.3995844  2.59588786 0.4481454  1.1769885 0.7165573</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 G0154 60  0.78804294 0.3112882  0.56018572 0.2939417  2.2034264 0.6403500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 G0155 60 -1.22254429 0.3344952 -1.50442856 0.3498851 -0.1285612 0.6403500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 G0156 60  0.74295270 0.2372211  0.75492144 0.2802843  0.6999606 0.6403500</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    conflict_z</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.76739416</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 -0.47162403</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.07754556</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -0.49864089</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.05055246</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.68270346</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -0.28748103</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.01118402</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1.67886086</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 -2.33218751</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 -1.88551471</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.07862723</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
