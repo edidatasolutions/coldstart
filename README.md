@@ -52,29 +52,31 @@ attribute codes, content metadata. The package does not call a model itself.
 - **Family-level trust check.** A chi-square test of prior-data conflict per
   family; `cs_distrust()` withdraws priors from failing families.
 
-## Validation (known truth, 5 replications, `inst/validation/known_truth.R`)
+## Validation (known truth, 100 replications)
 
 Predictive SDs are honest: stated 0.54 vs actual RMSE 0.53 (seen families),
-0.70 vs 0.64 (unseen family); 90% intervals cover 90.8% and 90.4%.
+0.68 vs 0.64 (unseen family); 90% intervals cover 90.8% and 90.2%.
 
 RMSE of difficulty, seen families:
 
 | responses per item | baseline | predicted prior |
 |---|---|---|
-| 15 | 0.72 | 0.40 |
-| 25 | 0.53 | 0.35 |
-| 50 | 0.36 | 0.30 |
-| 100 | 0.27 | 0.23 |
+| 15 | 0.69 | 0.41 |
+| 25 | 0.52 | 0.36 |
+| 50 | 0.35 | 0.29 |
+| 100 | 0.24 | 0.22 |
+| 200 | 0.17 | 0.16 |
 
-With the prior, 25 responses do what 50 do without it.
+With the prior, 25 responses do about what 50 do without it.
 
 **Drifted ("rogue") template family** (+1.2 logits vs its history): the prior
-alone hurts (0.66 vs 0.61 at n = 25). `cs_check` flags the family in 80% of
-replications at n = 25 and 100% at n ≥ 50, with 0.2 false family flags per
-replication. After `cs_distrust()`, RMSE is back at baseline (0.57 at n = 25).
+alone hurts (0.63 vs 0.60 at n = 25). `cs_check` flags the family in 80% of
+replications at n = 15, 94% at n = 25 and 98–100% at n ≥ 50, with 0.1–0.2
+false family flags per replication. After `cs_distrust()`, RMSE is back at or
+slightly below baseline (0.58 at n = 25).
 
 **Planner:** a target posterior SD of 0.30 needs a median of 40 responses per
-item with the prior vs 57 without; achieved SD 0.302, RMSE 0.300.
+item with the prior vs 57 without; achieved SD 0.303, RMSE 0.301.
 
 ## Status
 
