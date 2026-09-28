@@ -19,7 +19,11 @@ larger unseen-family SD).}
 \item{...}{Unused.}
 }
 \value{
-Data frame: `item`, `family`, `mean`, `sd`, `family_seen`.
+Data frame: `item`, `family`, `mean`, `sd`, `sd_shared`,
+  `family_seen`. `sd` is each item's total predictive SD; `sd_shared` is
+  the part of it shared by all items of the same family (for an unseen
+  family, mostly its unknown family effect). [cs_check()] uses it so that
+  a family is not flagged merely for the shared error its SD already allows.
 }
 \description{
 Predicted difficulty and predictive SD for new items

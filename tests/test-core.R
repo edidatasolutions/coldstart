@@ -53,6 +53,20 @@ rg <- nw$rogue[match(cal_d$item, nw$item)]
 bt <- nw$b_true[match(cal_d$item, nw$item)]
 stopifnot(rmse(cal_d$post_mean, rg) < 1.1 * rmse(cal_d$base_mean, rg))
 
+# 4b. Shared family error: estimated for unseen families and used by the check
+stopifnot(pred$sd_shared[!pred$family_seen][1] > 0.15,
+          all(pred$sd_shared <= pred$sd))
+# A family whose items share an error that its SD allows is not flagged:
+# construct conflicts equal to a common 1-SD shared offset with no item noise.
+k <- 12
+toy <- data.frame(item = paste0("i", 1:k), base_mean = 0.4, base_sd = 0.05,
+                  prior_mean = 0, prior_sd = 0.65, prior_sd_shared = 0.4)
+toy$conflict_z <- (toy$base_mean - toy$prior_mean) / sqrt(toy$prior_sd^2 + toy$base_sd^2)
+fam_toy <- stats::setNames(rep("new", k), toy$item)
+stopifnot(cs_check(toy, fam_toy)$trustworthy)
+toy0 <- toy; toy0$prior_sd_shared <- 0
+stopifnot(cs_check(toy0, fam_toy)$p_value < cs_check(toy, fam_toy)$p_value)
+
 # 5. Planner delivers the target precision -------------------------------------------
 pl <- cs_plan(pred, target_sd = 0.3)
 n_plan <- stats::setNames(pmax(pl$n_with_prior, 1), pl$item)

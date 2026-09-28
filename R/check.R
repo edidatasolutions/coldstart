@@ -3,9 +3,16 @@
 #' Compares each item's baseline (data-driven) estimate with its prediction,
 #' using `conflict_z` from [cs_calibrate()]. For each family it reports the
 #' mean z (bias direction), coverage of the nominal predictive interval, and a
-#' chi-square test of `sum(z^2)`. Families with p below `alpha` are marked
-#' untrustworthy: their predictions should not be used as priors until the
-#' predictor is retrained on their calibrated items.
+#' chi-square test of prior-data conflict. Families with p below `alpha` are
+#' marked untrustworthy: their predictions should not be used as priors until
+#' the predictor is retrained on their calibrated items.
+#'
+#' Prediction errors of items in the same family are correlated: they share
+#' the error in the family's estimated effect, which for a family unseen in
+#' training is its whole effect. The test statistic is the quadratic form of
+#' the family's conflicts under that correlation (`prior_sd_shared`), which
+#' is chi-square with one degree of freedom per item. Ignoring the
+#' correlation flags new families far above `alpha` merely for being new.
 #'
 #' @param calibration A `cs_calibration` computed with a prior.
 #' @param family Family per item, named by item id (or a data frame with
@@ -29,11 +36,21 @@ cs_check <- function(calibration, family, level = 0.9, alpha = 0.01) {
   fam <- family[calibration$item]
   if (anyNA(fam)) stop("Some calibrated items have no family.")
   zc <- stats::qnorm(1 - (1 - level) / 2)
-  res <- lapply(split(calibration$conflict_z, fam), function(z) {
-    k <- length(z)
-    data.frame(n_items = k, mean_z = mean(z), rms_z = sqrt(mean(z^2)),
-               coverage = mean(abs(z) <= zc),
-               p_value = stats::pchisq(sum(z^2), k, lower.tail = FALSE))
+  shared <- calibration$prior_sd_shared
+  if (is.null(shared)) shared <- rep(0, nrow(calibration))
+  d <- data.frame(z = calibration$conflict_z,
+                  e = calibration$base_mean - calibration$prior_mean,
+                  v = calibration$prior_sd^2 + calibration$base_sd^2,
+                  t2 = ifelse(is.na(shared), 0, shared^2))
+  res <- lapply(split(d, fam), function(g) {
+    k <- nrow(g)
+    # Cov(e) = diag(v - t2) + t2 * 11'; quadratic form by Sherman-Morrison.
+    t2 <- min(g$t2[1], 0.99 * min(g$v))
+    w <- 1 / (g$v - t2)
+    q <- sum(w * g$e^2) - t2 * sum(w * g$e)^2 / (1 + t2 * sum(w))
+    data.frame(n_items = k, mean_z = mean(g$z), rms_z = sqrt(mean(g$z^2)),
+               coverage = mean(abs(g$z) <= zc),
+               p_value = stats::pchisq(q, k, lower.tail = FALSE))
   })
   out <- cbind(family = names(res), do.call(rbind, res), stringsAsFactors = FALSE)
   out$trustworthy <- out$p_value >= alpha
@@ -73,5 +90,6 @@ cs_distrust <- function(prior, check, vague_sd = 3) {
   prior$trusted <- !(prior$family %in% bad)
   prior$mean[!prior$trusted] <- 0
   prior$sd[!prior$trusted] <- vague_sd
+  if (!is.null(prior$sd_shared)) prior$sd_shared[!prior$trusted] <- 0
   prior
 }

@@ -24,9 +24,17 @@ Data frame, one row per family: `family`, `n_items`, `mean_z`,
 Compares each item's baseline (data-driven) estimate with its prediction,
 using `conflict_z` from [cs_calibrate()]. For each family it reports the
 mean z (bias direction), coverage of the nominal predictive interval, and a
-chi-square test of `sum(z^2)`. Families with p below `alpha` are marked
-untrustworthy: their predictions should not be used as priors until the
-predictor is retrained on their calibrated items.
+chi-square test of prior-data conflict. Families with p below `alpha` are
+marked untrustworthy: their predictions should not be used as priors until
+the predictor is retrained on their calibrated items.
+}
+\details{
+Prediction errors of items in the same family are correlated: they share
+the error in the family's estimated effect, which for a family unseen in
+training is its whole effect. The test statistic is the quadratic form of
+the family's conflicts under that correlation (`prior_sd_shared`), which
+is chi-square with one degree of freedom per item. Ignoring the
+correlation flags new families far above `alpha` merely for being new.
 }
 \examples{
 sim <- cs_simulate(n_train = 150, n_new = 80, seed = 1)

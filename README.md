@@ -50,7 +50,9 @@ attribute codes, content metadata. The package does not call a model itself.
 - **Robust prior.** The default Student-t (df = 4) lets the data override a bad
   prediction instead of being dragged toward it.
 - **Family-level trust check.** A chi-square test of prior-data conflict per
-  family; `cs_distrust()` withdraws priors from failing families.
+  family that allows for the prediction error all items of a family share
+  (for a new template, its unknown family effect); `cs_distrust()` withdraws
+  priors from failing families.
 
 ## Validation (known truth, 100 replications)
 
@@ -71,9 +73,14 @@ With the prior, 25 responses do about what 50 do without it.
 
 **Drifted ("rogue") template family** (+1.2 logits vs its history): the prior
 alone hurts (0.63 vs 0.60 at n = 25). `cs_check` flags the family in 80% of
-replications at n = 15, 94% at n = 25 and 98–100% at n ≥ 50, with 0.1–0.2
-false family flags per replication. After `cs_distrust()`, RMSE is back at or
-slightly below baseline (0.58 at n = 25).
+replications at n = 15, 94% at n = 25 and 98–100% at n ≥ 50. After
+`cs_distrust()`, RMSE is back at or slightly below baseline (0.58 at n = 25).
+
+**False flags** (nominal 1% per family): honest seen families 0.3–2.1%
+(1.3% at n = 200 pooled over 300 replications); the new, unseen family 0–1%.
+In the development version, the check accounts for error shared within a
+family. Treating items as independent, as version 0.1.0 does, flagged the
+unseen family in 3–7% of replications.
 
 **Planner:** a target posterior SD of 0.30 needs a median of 40 responses per
 item with the prior vs 57 without; achieved SD 0.303, RMSE 0.301.

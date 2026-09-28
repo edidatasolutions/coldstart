@@ -33,7 +33,8 @@ log_prior <- function(grid, mean, sd, df) {
 #' @param baseline_sd SD of the vague baseline prior.
 #' @param grid Difficulty grid.
 #' @return A `cs_calibration` data frame: `item`, `n`, `post_mean`, `post_sd`,
-#'   `base_mean`, `base_sd`, `prior_mean`, `prior_sd`, and `conflict_z`
+#'   `base_mean`, `base_sd`, `prior_mean`, `prior_sd`, `prior_sd_shared`
+#'   (the prior's `sd_shared`, 0 if absent), and `conflict_z`
 #'   (baseline estimate vs prior, standardized by their combined SD: a
 #'   prior-data conflict check).
 #' @examples
@@ -62,13 +63,14 @@ cs_calibrate <- function(responses, prior = NULL, prior_df = 4, baseline_sd = 3,
     base <- grid_summary(ll + stats::dnorm(grid, 0, baseline_sd, log = TRUE), grid)
     row <- data.frame(item = i, n = nrow(d), post_mean = base[["mean"]], post_sd = base[["sd"]],
                       base_mean = base[["mean"]], base_sd = base[["sd"]],
-                      prior_mean = NA_real_, prior_sd = NA_real_, conflict_z = NA_real_,
-                      stringsAsFactors = FALSE)
+                      prior_mean = NA_real_, prior_sd = NA_real_, prior_sd_shared = NA_real_,
+                      conflict_z = NA_real_, stringsAsFactors = FALSE)
     if (!is.null(prior)) {
       p <- prior[match(i, prior$item), ]
       post <- grid_summary(ll + log_prior(grid, p$mean, p$sd, prior_df), grid)
       row$post_mean <- post[["mean"]]; row$post_sd <- post[["sd"]]
       row$prior_mean <- p$mean; row$prior_sd <- p$sd
+      row$prior_sd_shared <- if (is.null(p$sd_shared) || is.na(p$sd_shared)) 0 else p$sd_shared
       row$conflict_z <- (base[["mean"]] - p$mean) / sqrt(p$sd^2 + base[["sd"]]^2)
     }
     row

@@ -41,15 +41,21 @@ cs_predictor <- function(b, features, family = NULL,
   sigma_seen <- sqrt(min(cv_mse))
 
   sigma_unseen <- sigma_seen
+  shared_seen <- shared_unseen <- 0
   if (length(fam_levels) > 1) {
+    shared_seen <- shared_sd(oof_pred(Z, b, fold, lambda)$err, family)
     # Leave-one-family-out: the held-out family's indicator column is all
     # zero in training, so its effect is shrunk to 0, exactly as for a new family.
-    sigma_unseen <- sqrt(mean(oof_pred(Z, b, match(family, fam_levels), lambda)$err^2))
+    err_lofo <- oof_pred(Z, b, match(family, fam_levels), lambda)$err
+    sigma_unseen <- sqrt(mean(err_lofo^2))
+    shared_unseen <- shared_sd(err_lofo, family)
   }
   fit <- ridge(Z, b, lambda)
   structure(list(coef = fit$coef, intercept = fit$intercept, lambda = lambda,
                  center = ctr, scale = scl, families = fam_levels,
                  sigma_seen = sigma_seen, sigma_unseen = sigma_unseen,
+                 shared_seen = min(shared_seen, 0.99 * sigma_seen),
+                 shared_unseen = min(shared_unseen, 0.99 * sigma_unseen),
                  cv = data.frame(lambda = lambdas, rmse = sqrt(cv_mse)),
                  n_train = length(b)),
             class = "cs_predictor")
@@ -63,6 +69,16 @@ design_matrix <- function(features, family, ctr, scl, fam_levels) {
     Z <- cbind(Z, D)
   }
   Z
+}
+
+# SD of the prediction error shared by all items of a family, by method of
+# moments on out-of-sample errors: E[family mean^2] = shared^2 + within^2 / n_f.
+shared_sd <- function(err, family) {
+  family <- as.character(family)
+  m <- tapply(err, family, mean); n <- tapply(err, family, length)
+  if (length(m) < 2 || length(err) <= length(m)) return(0)
+  within2 <- sum((err - m[family])^2) / (length(err) - length(m))
+  sqrt(max(0, mean(m^2 - within2 / n)))
 }
 
 ridge <- function(Z, y, lambda) {
@@ -90,7 +106,11 @@ oof_pred <- function(Z, y, fold, lambda) {
 #'   larger unseen-family SD).
 #' @param item Optional item ids (default: rownames of `features`).
 #' @param ... Unused.
-#' @return Data frame: `item`, `family`, `mean`, `sd`, `family_seen`.
+#' @return Data frame: `item`, `family`, `mean`, `sd`, `sd_shared`,
+#'   `family_seen`. `sd` is each item's total predictive SD; `sd_shared` is
+#'   the part of it shared by all items of the same family (for an unseen
+#'   family, mostly its unknown family effect). [cs_check()] uses it so that
+#'   a family is not flagged merely for the shared error its SD already allows.
 #' @examples
 #' sim <- cs_simulate(n_train = 200, n_new = 60, seed = 1)
 #' it <- sim$items; tr <- it$set == "train"
@@ -107,6 +127,8 @@ predict.cs_predictor <- function(object, features, family = NULL, item = rowname
              family = if (is.null(family)) NA_character_ else as.character(family),
              mean = object$intercept + drop(Z %*% object$coef),
              sd = ifelse(seen, object$sigma_seen, object$sigma_unseen),
+             sd_shared = ifelse(seen, if (is.null(object$shared_seen)) 0 else object$shared_seen,
+                                if (is.null(object$shared_unseen)) 0 else object$shared_unseen),
              family_seen = seen, stringsAsFactors = FALSE)
 }
 
@@ -116,5 +138,8 @@ print.cs_predictor <- function(x, ...) {
       length(x$families), "families\n")
   cat(sprintf("predictive SD: %.3f (seen family), %.3f (unseen family)\n",
               x$sigma_seen, x$sigma_unseen))
+  if (!is.null(x$shared_seen))
+    cat(sprintf("  shared within family: %.3f (seen), %.3f (unseen)\n",
+                x$shared_seen, x$shared_unseen))
   invisible(x)
 }
