@@ -13,6 +13,9 @@ This is the first submission of coldstart.
 0 errors | 0 warnings | 1 note
 
 * This is a new release.
+* Words flagged as possibly misspelled are author names of cited references
+  (Hoerl, Kennard, Mislevy, Sheehan, Wingersky), the Rasch model, and the
+  technical term "embeddings" (numeric text representations).
 
 ## Notes for the reviewer
 
