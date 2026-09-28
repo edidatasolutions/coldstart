@@ -83,3 +83,9 @@ Done: `cs_simulate`, `cs_responses`, `cs_predictor` (+`predict`),
 (discrimination priors), sequential updating as responses arrive, ability
 uncertainty for pretest examinees (currently treated as known from
 operational scoring), and non-linear predictors.
+
+## Getting help and contributing
+
+Questions and bug reports: https://github.com/edidatasolutions/coldstart/issues. See
+[CONTRIBUTING.md](.github/CONTRIBUTING.md) for how to report problems, get
+help, or contribute code.
