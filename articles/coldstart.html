@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">coldstart</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,15 +90,16 @@ harder than its history suggests.</p>
 <span><span class="va">pr</span></span>
 <span><span class="co">#&gt; &lt;cs_predictor&gt; ridge, lambda = 1 | 400 legacy items | 10 families</span></span>
 <span><span class="co">#&gt; predictive SD: 0.548 (seen family), 0.788 (unseen family)</span></span>
+<span><span class="co">#&gt;   shared within family: 0.000 (seen), 0.559 (unseen)</span></span>
 <span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">pr</span>, <span class="va">sim</span><span class="op">$</span><span class="va">features</span><span class="op">[</span><span class="op">!</span><span class="va">tr</span>, <span class="op">]</span>, <span class="va">it</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="op">!</span><span class="va">tr</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span></span>
-<span><span class="co">#&gt;        item family       mean        sd family_seen</span></span>
-<span><span class="co">#&gt; G0401 G0401    F07  1.3051977 0.5480338        TRUE</span></span>
-<span><span class="co">#&gt; G0402 G0402    F08 -1.8811880 0.5480338        TRUE</span></span>
-<span><span class="co">#&gt; G0403 G0403    F11 -0.4888554 0.7876555       FALSE</span></span>
-<span><span class="co">#&gt; G0404 G0404    F09 -0.5278875 0.5480338        TRUE</span></span>
-<span><span class="co">#&gt; G0405 G0405    F06 -0.1683571 0.5480338        TRUE</span></span>
-<span><span class="co">#&gt; G0406 G0406    F02 -0.4489074 0.5480338        TRUE</span></span></code></pre></div>
+<span><span class="co">#&gt;        item family       mean        sd sd_shared family_seen</span></span>
+<span><span class="co">#&gt; G0401 G0401    F07  1.3051977 0.5480338 0.0000000        TRUE</span></span>
+<span><span class="co">#&gt; G0402 G0402    F08 -1.8811880 0.5480338 0.0000000        TRUE</span></span>
+<span><span class="co">#&gt; G0403 G0403    F11 -0.4888554 0.7876555 0.5589692       FALSE</span></span>
+<span><span class="co">#&gt; G0404 G0404    F09 -0.5278875 0.5480338 0.0000000        TRUE</span></span>
+<span><span class="co">#&gt; G0405 G0405    F06 -0.1683571 0.5480338 0.0000000        TRUE</span></span>
+<span><span class="co">#&gt; G0406 G0406    F02 -0.4489074 0.5480338 0.0000000        TRUE</span></span></code></pre></div>
 <p>The predictive SD is estimated out of sample. It is larger for a
 family never seen in training, because the family’s own effect is then
 unknown.</p>
@@ -144,9 +145,9 @@ unknown.</p>
 <span><span class="co">#&gt; 4     F04       7  0.23966538 1.0288285 0.8571429 3.875306e-01        TRUE</span></span>
 <span><span class="co">#&gt; 3     F03      12  0.19518559 1.0150236 0.8333333 4.169631e-01        TRUE</span></span>
 <span><span class="co">#&gt; 8     F08      13  0.23874499 1.0076796 0.8461538 4.324513e-01        TRUE</span></span>
+<span><span class="co">#&gt; 11    F11      19 -0.31884214 0.7773376 1.0000000 5.212788e-01        TRUE</span></span>
 <span><span class="co">#&gt; 2     F02       9 -0.10144038 0.8624153 0.8888889 6.689603e-01        TRUE</span></span>
 <span><span class="co">#&gt; 5     F05      15  0.32898050 0.8516693 0.9333333 7.610460e-01        TRUE</span></span>
-<span><span class="co">#&gt; 11    F11      19 -0.31884214 0.7773376 1.0000000 9.066038e-01        TRUE</span></span>
 <span><span class="co">#&gt; 10    F10      15 -0.08314448 0.7429080 1.0000000 9.121243e-01        TRUE</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">it</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="va">it</span><span class="op">$</span><span class="va">rogue</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "F01"</span></span></code></pre></div>

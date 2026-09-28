@@ -68,4 +68,5 @@ pr <- cs_predictor(it$b_legacy[tr], sim$features[tr, ], it$family[tr], seed = 1)
 pr    # predictive SD for seen vs unseen template families
 #> <cs_predictor> ridge, lambda = 6.31 | 200 legacy items | 10 families
 #> predictive SD: 0.619 (seen family), 0.684 (unseen family)
+#>   shared within family: 0.000 (seen), 0.327 (unseen)
 ```

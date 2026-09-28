@@ -3,10 +3,10 @@
 Compares each item's baseline (data-driven) estimate with its
 prediction, using \`conflict_z\` from \[cs_calibrate()\]. For each
 family it reports the mean z (bias direction), coverage of the nominal
-predictive interval, and a chi-square test of \`sum(z^2)\`. Families
-with p below \`alpha\` are marked untrustworthy: their predictions
-should not be used as priors until the predictor is retrained on their
-calibrated items.
+predictive interval, and a chi-square test of prior-data conflict.
+Families with p below \`alpha\` are marked untrustworthy: their
+predictions should not be used as priors until the predictor is
+retrained on their calibrated items.
 
 ## Usage
 
@@ -38,6 +38,15 @@ cs_check(calibration, family, level = 0.9, alpha = 0.01)
 Data frame, one row per family: \`family\`, \`n_items\`, \`mean_z\`,
 \`rms_z\`, \`coverage\`, \`p_value\`, \`trustworthy\`.
 
+## Details
+
+Prediction errors of items in the same family are correlated: they share
+the error in the family's estimated effect, which for a family unseen in
+training is its whole effect. The test statistic is the quadratic form
+of the family's conflicts under that correlation (\`prior_sd_shared\`),
+which is chi-square with one degree of freedom per item. Ignoring the
+correlation flags new families far above \`alpha\` merely for being new.
+
 ## Examples
 
 ``` r
@@ -49,8 +58,8 @@ cal <- cs_calibrate(cs_responses(sim, 60, seed = 2), pred)
 cs_check(cal, setNames(it$family[!tr], it$item[!tr]))
 #>    family n_items      mean_z     rms_z  coverage      p_value trustworthy
 #> 1     F01       9  1.77227828 1.9395947 0.4444444 9.457866e-05       FALSE
+#> 11    F11       8 -0.18373104 1.3415233 0.6250000 1.076986e-02        TRUE
 #> 3     F03       9 -0.79967649 1.4127883 0.5555556 3.559659e-02        TRUE
-#> 11    F11       8 -0.18373104 1.3415233 0.6250000 7.197571e-02        TRUE
 #> 7     F07       6 -0.44326387 1.1564061 0.8333333 2.363757e-01        TRUE
 #> 8     F08       7 -0.02635903 1.0221057 0.8571429 3.970438e-01        TRUE
 #> 6     F06       5 -0.09557271 0.9554180 1.0000000 4.713508e-01        TRUE

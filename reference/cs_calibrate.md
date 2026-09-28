@@ -45,7 +45,8 @@ cs_calibrate(
 
 A \`cs_calibration\` data frame: \`item\`, \`n\`, \`post_mean\`,
 \`post_sd\`, \`base_mean\`, \`base_sd\`, \`prior_mean\`, \`prior_sd\`,
-and \`conflict_z\` (baseline estimate vs prior, standardized by their
+\`prior_sd_shared\` (the prior's \`sd_shared\`, 0 if absent), and
+\`conflict_z\` (baseline estimate vs prior, standardized by their
 combined SD: a prior-data conflict check).
 
 ## Details

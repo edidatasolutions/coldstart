@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">coldstart</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,7 +88,7 @@
 <li>
 <strong>Robust prior.</strong> The default Student-t (df = 4) lets the data override a bad prediction instead of being dragged toward it.</li>
 <li>
-<strong>Family-level trust check.</strong> A chi-square test of prior-data conflict per family; <code><a href="reference/cs_distrust.html">cs_distrust()</a></code> withdraws priors from failing families.</li>
+<strong>Family-level trust check.</strong> A chi-square test of prior-data conflict per family that allows for the prediction error all items of a family share (for a new template, its unknown family effect); <code><a href="reference/cs_distrust.html">cs_distrust()</a></code> withdraws priors from failing families.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -131,7 +131,8 @@
 </tbody>
 </table>
 <p>With the prior, 25 responses do about what 50 do without it.</p>
-<p><strong>Drifted (“rogue”) template family</strong> (+1.2 logits vs its history): the prior alone hurts (0.63 vs 0.60 at n = 25). <code>cs_check</code> flags the family in 80% of replications at n = 15, 94% at n = 25 and 98–100% at n ≥ 50, with 0.1–0.2 false family flags per replication. After <code><a href="reference/cs_distrust.html">cs_distrust()</a></code>, RMSE is back at or slightly below baseline (0.58 at n = 25).</p>
+<p><strong>Drifted (“rogue”) template family</strong> (+1.2 logits vs its history): the prior alone hurts (0.63 vs 0.60 at n = 25). <code>cs_check</code> flags the family in 80% of replications at n = 15, 94% at n = 25 and 98–100% at n ≥ 50. After <code><a href="reference/cs_distrust.html">cs_distrust()</a></code>, RMSE is back at or slightly below baseline (0.58 at n = 25).</p>
+<p><strong>False flags</strong> (nominal 1% per family): honest seen families 0.3–2.1% (1.3% at n = 200 pooled over 300 replications); the new, unseen family 0–1%. In the development version, the check accounts for error shared within a family. Treating items as independent, as version 0.1.0 does, flagged the unseen family in 3–7% of replications.</p>
 <p><strong>Planner:</strong> a target posterior SD of 0.30 needs a median of 40 responses per item with the prior vs 57 without; achieved SD 0.303, RMSE 0.301.</p>
 </div>
 <div class="section level2">

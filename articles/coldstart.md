@@ -33,15 +33,16 @@ pr <- cs_predictor(it$b_legacy[tr], sim$features[tr, ], it$family[tr], seed = 1)
 pr
 #> <cs_predictor> ridge, lambda = 1 | 400 legacy items | 10 families
 #> predictive SD: 0.548 (seen family), 0.788 (unseen family)
+#>   shared within family: 0.000 (seen), 0.559 (unseen)
 pred <- predict(pr, sim$features[!tr, ], it$family[!tr])
 head(pred)
-#>        item family       mean        sd family_seen
-#> G0401 G0401    F07  1.3051977 0.5480338        TRUE
-#> G0402 G0402    F08 -1.8811880 0.5480338        TRUE
-#> G0403 G0403    F11 -0.4888554 0.7876555       FALSE
-#> G0404 G0404    F09 -0.5278875 0.5480338        TRUE
-#> G0405 G0405    F06 -0.1683571 0.5480338        TRUE
-#> G0406 G0406    F02 -0.4489074 0.5480338        TRUE
+#>        item family       mean        sd sd_shared family_seen
+#> G0401 G0401    F07  1.3051977 0.5480338 0.0000000        TRUE
+#> G0402 G0402    F08 -1.8811880 0.5480338 0.0000000        TRUE
+#> G0403 G0403    F11 -0.4888554 0.7876555 0.5589692       FALSE
+#> G0404 G0404    F09 -0.5278875 0.5480338 0.0000000        TRUE
+#> G0405 G0405    F06 -0.1683571 0.5480338 0.0000000        TRUE
+#> G0406 G0406    F02 -0.4489074 0.5480338 0.0000000        TRUE
 ```
 
 The predictive SD is estimated out of sample. It is larger for a family
@@ -90,9 +91,9 @@ chk
 #> 4     F04       7  0.23966538 1.0288285 0.8571429 3.875306e-01        TRUE
 #> 3     F03      12  0.19518559 1.0150236 0.8333333 4.169631e-01        TRUE
 #> 8     F08      13  0.23874499 1.0076796 0.8461538 4.324513e-01        TRUE
+#> 11    F11      19 -0.31884214 0.7773376 1.0000000 5.212788e-01        TRUE
 #> 2     F02       9 -0.10144038 0.8624153 0.8888889 6.689603e-01        TRUE
 #> 5     F05      15  0.32898050 0.8516693 0.9333333 7.610460e-01        TRUE
-#> 11    F11      19 -0.31884214 0.7773376 1.0000000 9.066038e-01        TRUE
 #> 10    F10      15 -0.08314448 0.7429080 1.0000000 9.121243e-01        TRUE
 unique(it$family[it$rogue])
 #> [1] "F01"

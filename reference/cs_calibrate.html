@@ -13,7 +13,7 @@ N(0, `baseline_sd`^2), which stands in for conventional calibration."></head><bo
 
     <a class="navbar-brand me-2" href="../index.html">coldstart</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,7 +86,8 @@ or `NULL` for baseline only.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A `cs_calibration` data frame: `item`, `n`, `post_mean`, `post_sd`,
-  `base_mean`, `base_sd`, `prior_mean`, `prior_sd`, and `conflict_z`
+  `base_mean`, `base_sd`, `prior_mean`, `prior_sd`, `prior_sd_shared`
+  (the prior's `sd_shared`, 0 if absent), and `conflict_z`
   (baseline estimate vs prior, standardized by their combined SD: a
   prior-data conflict check).</p>
     </div>

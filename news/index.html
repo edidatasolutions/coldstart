@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">coldstart</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,6 +34,11 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="coldstart-development-version">coldstart (development version)<a class="anchor" aria-label="anchor" href="#coldstart-development-version"></a></h2>
+<ul><li>
+<code><a href="../reference/cs_check.html">cs_check()</a></code> now accounts for prediction error shared by all items of a family (the unseen family’s unknown effect, or the estimation error of a seen family’s effect). <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> returns this as <code>sd_shared</code>, estimated from the cross-validation and leave-one-family-out residuals, and <code><a href="../reference/cs_calibrate.html">cs_calibrate()</a></code> carries it as <code>prior_sd_shared</code>. Previously a family unseen in training was falsely flagged 3.5-6% of the time at alpha = 0.01; it is now flagged at about the nominal rate. Seen families, detection of drifted families and calibration accuracy are unchanged. Calibrations without the new column behave exactly as before.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="coldstart-010">coldstart 0.1.0<a class="anchor" aria-label="anchor" href="#coldstart-010"></a></h2>
 <ul><li>Initial release.</li>
 <li>Difficulty prediction from item features with honest seen/unseen-family uncertainty (<code><a href="../reference/cs_predictor.html">cs_predictor()</a></code>).</li>
@@ -41,7 +46,8 @@
 <li>Pretest sample-size planning (<code><a href="../reference/cs_plan.html">cs_plan()</a></code>).</li>
 <li>Family-level trust diagnostics and prior withdrawal (<code><a href="../reference/cs_check.html">cs_check()</a></code>, <code><a href="../reference/cs_distrust.html">cs_distrust()</a></code>).</li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">coldstart</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,11 @@ larger unseen-family SD).</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Data frame: `item`, `family`, `mean`, `sd`, `family_seen`.</p>
+    <p>Data frame: `item`, `family`, `mean`, `sd`, `sd_shared`,
+  `family_seen`. `sd` is each item's total predictive SD; `sd_shared` is
+  the part of it shared by all items of the same family (for an unseen
+  family, mostly its unknown family effect). [cs_check()] uses it so that
+  a family is not flagged merely for the shared error its SD already allows.</p>
     </div>
 
     <div class="section level2">
@@ -81,13 +85,13 @@ larger unseen-family SD).</p></dd>
 <span class="r-in"><span><span class="va">pr</span> <span class="op">&lt;-</span> <span class="fu"><a href="cs_predictor.html">cs_predictor</a></span><span class="op">(</span><span class="va">it</span><span class="op">$</span><span class="va">b_legacy</span><span class="op">[</span><span class="va">tr</span><span class="op">]</span>, <span class="va">sim</span><span class="op">$</span><span class="va">features</span><span class="op">[</span><span class="va">tr</span>, <span class="op">]</span>, <span class="va">it</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="va">tr</span><span class="op">]</span>, seed <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">pr</span>, <span class="va">sim</span><span class="op">$</span><span class="va">features</span><span class="op">[</span><span class="op">!</span><span class="va">tr</span>, <span class="op">]</span>, <span class="va">it</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="op">!</span><span class="va">tr</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        item family       mean        sd family_seen</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> G0201 G0201    F01 -0.9760557 0.6186199        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> G0202 G0202    F07  0.6804164 0.6186199        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> G0203 G0203    F05 -0.5732907 0.6186199        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> G0204 G0204    F09 -0.9805451 0.6186199        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> G0205 G0205    F03 -0.2853529 0.6186199        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> G0206 G0206    F05 -0.6911932 0.6186199        TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        item family       mean        sd sd_shared family_seen</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> G0201 G0201    F01 -0.9760557 0.6186199         0        TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> G0202 G0202    F07  0.6804164 0.6186199         0        TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> G0203 G0203    F05 -0.5732907 0.6186199         0        TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> G0204 G0204    F09 -0.9805451 0.6186199         0        TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> G0205 G0205    F03 -0.2853529 0.6186199         0        TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> G0206 G0206    F05 -0.6911932 0.6186199         0        TRUE</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
