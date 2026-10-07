@@ -1,5 +1,8 @@
 # coldstart
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/coldstart)](https://CRAN.R-project.org/package=coldstart)
+
 **Calibrate AI-generated items before you have the pretest seats to do
 it the old way.**
 
@@ -29,7 +32,7 @@ cal  <- cs_calibrate(resp, cs_distrust(pred, chk))  # drop priors that failed
 
 ## Installation
 
-From CRAN (once released):
+From CRAN:
 
 ``` r
 
