@@ -10,3 +10,6 @@
 ^CRAN-SUBMISSION$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^inst/validation/.*\.rds$
+^inst/validation/.*_output\.txt$
+^inst/validation/.*\.log$
