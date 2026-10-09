@@ -39,7 +39,7 @@
 <code><a href="../reference/cs_check.html">cs_check()</a></code> now accounts for prediction error shared by all items of a family (the unseen family’s unknown effect, or the estimation error of a seen family’s effect). <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> returns this as <code>sd_shared</code>, estimated from the cross-validation and leave-one-family-out residuals, and <code><a href="../reference/cs_calibrate.html">cs_calibrate()</a></code> carries it as <code>prior_sd_shared</code>. Previously a family unseen in training was falsely flagged 3.5-6% of the time at alpha = 0.01; it is now flagged at about the nominal rate. Seen families, detection of drifted families and calibration accuracy are unchanged. Calibrations without the new column behave exactly as before.</li>
 </ul></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.0" id="coldstart-010">coldstart 0.1.0<a class="anchor" aria-label="anchor" href="#coldstart-010"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.1.0" id="coldstart-010">coldstart 0.1.0<a class="anchor" aria-label="anchor" href="#coldstart-010"></a></h2><p class="text-muted">CRAN release: 2026-10-07</p>
 <ul><li>Initial release.</li>
 <li>Difficulty prediction from item features with honest seen/unseen-family uncertainty (<code><a href="../reference/cs_predictor.html">cs_predictor()</a></code>).</li>
 <li>Grid-Bayes calibration with robust Student-t predicted priors (<code><a href="../reference/cs_calibrate.html">cs_calibrate()</a></code>).</li>

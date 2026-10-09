@@ -17,6 +17,8 @@
 
 ## coldstart 0.1.0
 
+CRAN release: 2026-10-07
+
 - Initial release.
 - Difficulty prediction from item features with honest
   seen/unseen-family uncertainty
