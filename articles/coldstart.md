@@ -180,7 +180,7 @@ Both tests flag the drifted family. Only the independent test also flags
 the new family, whose items sit on average 1.3 SD below their
 predictions: the kind of common shift that `sd_shared` says to expect
 for a new family. In the package’s simulations, this correction lowered
-the rate at which the unseen family was falsely flagged from 3.5–7% to
+the rate at which the unseen family was falsely flagged from 3–7% to
 about 1% (at `alpha = 0.01`), while the drifted family was still
 detected. See
 [`?cs_check`](https://edidatasolutions.github.io/coldstart/reference/cs_check.md)
