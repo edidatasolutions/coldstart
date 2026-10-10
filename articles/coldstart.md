@@ -78,6 +78,14 @@ c(baseline = sqrt(mean((cal$base_mean - truth)^2)),
 
 ## Which families can we trust?
 
+A prediction is only as good as the family template it comes from. If a
+template has drifted (the items are now harder or easier than the
+features say), every item of that family is mispredicted in the same
+direction.
+[`cs_check()`](https://edidatasolutions.github.io/coldstart/reference/cs_check.md)
+compares the pretest estimates with the predictions, family by family,
+and flags families whose items conflict with their priors:
+
 ``` r
 
 fam <- setNames(it$family[!tr], it$item[!tr])
@@ -99,6 +107,9 @@ unique(it$family[it$rogue])
 #> [1] "F01"
 ```
 
+The drifted family is flagged. The family that never appeared in
+training is not, even though its predictions are the least certain.
+
 Priors for families that fail the check are withdrawn before the final
 calibration:
 
@@ -115,3 +126,62 @@ head(final[c("item", "n", "post_mean", "post_sd")])
 #> 5 G0405 100 -0.7933419 0.2231148
 #> 6 G0406 100 -0.6901677 0.2011189
 ```
+
+### Items of a family share prediction error
+
+Items of the same family do not err independently: they share the error
+in the family’s estimated effect. For a family unseen in training, the
+whole family effect is unknown, so all of its items are off by the same
+unknown amount. [`predict()`](https://rdrr.io/r/stats/predict.html)
+reports this shared part as `sd_shared`, alongside each item’s total
+predictive SD:
+
+``` r
+
+unique(pred[c("family_seen", "sd", "sd_shared")])
+#>       family_seen        sd sd_shared
+#> G0401        TRUE 0.5480338 0.0000000
+#> G0403       FALSE 0.7876555 0.5589692
+```
+
+Since version 0.2.0,
+[`cs_check()`](https://edidatasolutions.github.io/coldstart/reference/cs_check.md)
+tests each family’s conflicts under this correlation. Version 0.1.0
+treated the items as independent, so a new family whose effect happened
+to sit away from the average could fail the check merely for being new,
+even when its predictions were as honest as they claimed. The difference
+is easy to see on a bank where that happens. Setting `prior_sd_shared`
+to zero reproduces the old, independent test:
+
+``` r
+
+sim2 <- cs_simulate(n_train = 400, n_new = 150, seed = 110)
+it2 <- sim2$items; tr2 <- it2$set == "train"
+pr2 <- cs_predictor(it2$b_legacy[tr2], sim2$features[tr2, ], it2$family[tr2], seed = 10)
+pred2 <- predict(pr2, sim2$features[!tr2, ], it2$family[!tr2])
+cal2 <- cs_calibrate(cs_responses(sim2, 100, seed = 10), pred2)
+fam2 <- setNames(it2$family[!tr2], it2$item[!tr2])
+c(unseen = unique(it2$family[it2$unseen_family]), drifted = unique(it2$family[it2$rogue]))
+#>  unseen drifted 
+#>   "F11"   "F01"
+
+correlated <- cs_check(cal2, fam2)
+independent <- cs_check(transform(cal2, prior_sd_shared = 0), fam2)
+correlated[!correlated$trustworthy, c("family", "n_items", "mean_z", "p_value")]
+#>   family n_items   mean_z      p_value
+#> 1    F01      18 1.550548 2.661835e-07
+independent[!independent$trustworthy, c("family", "n_items", "mean_z", "p_value")]
+#>    family n_items    mean_z      p_value
+#> 1     F01      18  1.550548 2.661835e-07
+#> 11    F11      18 -1.309219 3.501922e-03
+```
+
+Both tests flag the drifted family. Only the independent test also flags
+the new family, whose items sit on average 1.3 SD below their
+predictions: the kind of common shift that `sd_shared` says to expect
+for a new family. In the package’s simulations, this correction lowered
+the rate at which the unseen family was falsely flagged from 3.5–7% to
+about 1% (at `alpha = 0.01`), while the drifted family was still
+detected. See
+[`?cs_check`](https://edidatasolutions.github.io/coldstart/reference/cs_check.md)
+for the test.

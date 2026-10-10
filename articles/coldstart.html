@@ -133,6 +133,12 @@ unknown.</p>
 <div class="section level2">
 <h2 id="which-families-can-we-trust">Which families can we trust?<a class="anchor" aria-label="anchor" href="#which-families-can-we-trust"></a>
 </h2>
+<p>A prediction is only as good as the family template it comes from. If
+a template has drifted (the items are now harder or easier than the
+features say), every item of that family is mispredicted in the same
+direction. <code><a href="../reference/cs_check.html">cs_check()</a></code> compares the pretest estimates with
+the predictions, family by family, and flags families whose items
+conflict with their priors:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">it</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="op">!</span><span class="va">tr</span><span class="op">]</span>, <span class="va">it</span><span class="op">$</span><span class="va">item</span><span class="op">[</span><span class="op">!</span><span class="va">tr</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cs_check.html">cs_check</a></span><span class="op">(</span><span class="fu"><a href="../reference/cs_calibrate.html">cs_calibrate</a></span><span class="op">(</span><span class="fu"><a href="../reference/cs_responses.html">cs_responses</a></span><span class="op">(</span><span class="va">sim</span>, <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>, <span class="va">pred</span><span class="op">)</span>, <span class="va">fam</span><span class="op">)</span></span>
@@ -151,6 +157,8 @@ unknown.</p>
 <span><span class="co">#&gt; 10    F10      15 -0.08314448 0.7429080 1.0000000 9.121243e-01        TRUE</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">it</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="va">it</span><span class="op">$</span><span class="va">rogue</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "F01"</span></span></code></pre></div>
+<p>The drifted family is flagged. The family that never appeared in
+training is not, even though its predictions are the least certain.</p>
 <p>Priors for families that fail the check are withdrawn before the
 final calibration:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -164,6 +172,55 @@ final calibration:</p>
 <span><span class="co">#&gt; 4 G0404 100  0.6417285 0.2345004</span></span>
 <span><span class="co">#&gt; 5 G0405 100 -0.7933419 0.2231148</span></span>
 <span><span class="co">#&gt; 6 G0406 100 -0.6901677 0.2011189</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="items-of-a-family-share-prediction-error">Items of a family share prediction error<a class="anchor" aria-label="anchor" href="#items-of-a-family-share-prediction-error"></a>
+</h3>
+<p>Items of the same family do not err independently: they share the
+error in the family’s estimated effect. For a family unseen in training,
+the whole family effect is unknown, so all of its items are off by the
+same unknown amount. <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> reports this shared part as
+<code>sd_shared</code>, alongside each item’s total predictive SD:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">pred</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"family_seen"</span>, <span class="st">"sd"</span>, <span class="st">"sd_shared"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       family_seen        sd sd_shared</span></span>
+<span><span class="co">#&gt; G0401        TRUE 0.5480338 0.0000000</span></span>
+<span><span class="co">#&gt; G0403       FALSE 0.7876555 0.5589692</span></span></code></pre></div>
+<p>Since version 0.2.0, <code><a href="../reference/cs_check.html">cs_check()</a></code> tests each family’s
+conflicts under this correlation. Version 0.1.0 treated the items as
+independent, so a new family whose effect happened to sit away from the
+average could fail the check merely for being new, even when its
+predictions were as honest as they claimed. The difference is easy to
+see on a bank where that happens. Setting <code>prior_sd_shared</code>
+to zero reproduces the old, independent test:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sim2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cs_simulate.html">cs_simulate</a></span><span class="op">(</span>n_train <span class="op">=</span> <span class="fl">400</span>, n_new <span class="op">=</span> <span class="fl">150</span>, seed <span class="op">=</span> <span class="fl">110</span><span class="op">)</span></span>
+<span><span class="va">it2</span> <span class="op">&lt;-</span> <span class="va">sim2</span><span class="op">$</span><span class="va">items</span>; <span class="va">tr2</span> <span class="op">&lt;-</span> <span class="va">it2</span><span class="op">$</span><span class="va">set</span> <span class="op">==</span> <span class="st">"train"</span></span>
+<span><span class="va">pr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cs_predictor.html">cs_predictor</a></span><span class="op">(</span><span class="va">it2</span><span class="op">$</span><span class="va">b_legacy</span><span class="op">[</span><span class="va">tr2</span><span class="op">]</span>, <span class="va">sim2</span><span class="op">$</span><span class="va">features</span><span class="op">[</span><span class="va">tr2</span>, <span class="op">]</span>, <span class="va">it2</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="va">tr2</span><span class="op">]</span>, seed <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">pred2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">pr2</span>, <span class="va">sim2</span><span class="op">$</span><span class="va">features</span><span class="op">[</span><span class="op">!</span><span class="va">tr2</span>, <span class="op">]</span>, <span class="va">it2</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="op">!</span><span class="va">tr2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">cal2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cs_calibrate.html">cs_calibrate</a></span><span class="op">(</span><span class="fu"><a href="../reference/cs_responses.html">cs_responses</a></span><span class="op">(</span><span class="va">sim2</span>, <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>, <span class="va">pred2</span><span class="op">)</span></span>
+<span><span class="va">fam2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">it2</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="op">!</span><span class="va">tr2</span><span class="op">]</span>, <span class="va">it2</span><span class="op">$</span><span class="va">item</span><span class="op">[</span><span class="op">!</span><span class="va">tr2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>unseen <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">it2</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="va">it2</span><span class="op">$</span><span class="va">unseen_family</span><span class="op">]</span><span class="op">)</span>, drifted <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">it2</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="va">it2</span><span class="op">$</span><span class="va">rogue</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  unseen drifted </span></span>
+<span><span class="co">#&gt;   "F11"   "F01"</span></span>
+<span></span>
+<span><span class="va">correlated</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cs_check.html">cs_check</a></span><span class="op">(</span><span class="va">cal2</span>, <span class="va">fam2</span><span class="op">)</span></span>
+<span><span class="va">independent</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cs_check.html">cs_check</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/transform.html" class="external-link">transform</a></span><span class="op">(</span><span class="va">cal2</span>, prior_sd_shared <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>, <span class="va">fam2</span><span class="op">)</span></span>
+<span><span class="va">correlated</span><span class="op">[</span><span class="op">!</span><span class="va">correlated</span><span class="op">$</span><span class="va">trustworthy</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"family"</span>, <span class="st">"n_items"</span>, <span class="st">"mean_z"</span>, <span class="st">"p_value"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;   family n_items   mean_z      p_value</span></span>
+<span><span class="co">#&gt; 1    F01      18 1.550548 2.661835e-07</span></span>
+<span><span class="va">independent</span><span class="op">[</span><span class="op">!</span><span class="va">independent</span><span class="op">$</span><span class="va">trustworthy</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"family"</span>, <span class="st">"n_items"</span>, <span class="st">"mean_z"</span>, <span class="st">"p_value"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;    family n_items    mean_z      p_value</span></span>
+<span><span class="co">#&gt; 1     F01      18  1.550548 2.661835e-07</span></span>
+<span><span class="co">#&gt; 11    F11      18 -1.309219 3.501922e-03</span></span></code></pre></div>
+<p>Both tests flag the drifted family. Only the independent test also
+flags the new family, whose items sit on average 1.3 SD below their
+predictions: the kind of common shift that <code>sd_shared</code> says
+to expect for a new family. In the package’s simulations, this
+correction lowered the rate at which the unseen family was falsely
+flagged from 3.5–7% to about 1% (at <code>alpha = 0.01</code>), while
+the drifted family was still detected. See <code><a href="../reference/cs_check.html">?cs_check</a></code> for
+the test.</p>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
