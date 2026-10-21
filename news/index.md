@@ -2,6 +2,8 @@
 
 ## coldstart (development version)
 
+## coldstart 0.2.0
+
 - [`cs_check()`](https://edidatasolutions.github.io/coldstart/reference/cs_check.md)
   now accounts for prediction error shared by all items of a family (the
   unseen family’s unknown effect, or the estimation error of a seen
@@ -10,7 +12,7 @@
   leave-one-family-out residuals, and
   [`cs_calibrate()`](https://edidatasolutions.github.io/coldstart/reference/cs_calibrate.md)
   carries it as `prior_sd_shared`. Previously a family unseen in
-  training was falsely flagged 3.5-6% of the time at alpha = 0.01; it is
+  training was falsely flagged 3-7% of the time at alpha = 0.01; it is
   now flagged at about the nominal rate. Seen families, detection of
   drifted families and calibration accuracy are unchanged. Calibrations
   without the new column behave exactly as before.
