@@ -1,3 +1,5 @@
+# coldstart (development version)
+
 # coldstart 0.2.0
 
 * `cs_check()` now accounts for prediction error shared by all items of a
