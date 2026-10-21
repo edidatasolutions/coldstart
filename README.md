@@ -80,8 +80,8 @@ replications at n = 15, 94% at n = 25 and 98–100% at n ≥ 50. After
 
 **False flags** (nominal 1% per family): honest seen families 0.3–2.1%
 (1.3% at n = 200 pooled over 300 replications); the new, unseen family 0–1%.
-In the development version, the check accounts for error shared within a
-family. Treating items as independent, as version 0.1.0 does, flagged the
+Since version 0.2.0, the check accounts for error shared within a
+family. Treating items as independent, as version 0.1.0 did, flagged the
 unseen family in 3–7% of replications.
 
 **Planner:** a target posterior SD of 0.30 needs a median of 40 responses per
@@ -98,5 +98,5 @@ operational scoring), and non-linear predictors.
 ## Getting help and contributing
 
 Questions and bug reports: https://github.com/edidatasolutions/coldstart/issues. See
-[CONTRIBUTING.md](.github/CONTRIBUTING.md) for how to report problems, get
+[CONTRIBUTING.md](https://github.com/edidatasolutions/coldstart/blob/main/.github/CONTRIBUTING.md) for how to report problems, get
 help, or contribute code.
